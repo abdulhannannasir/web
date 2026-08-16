@@ -172,7 +172,7 @@ function AIDraftsTab({ drafts, onPublish, onDiscard, onGenerate, generating, gen
 
   const startEdit = (d) => {
     setExpanded(d.id);
-    setEdits((e) => ({ ...e, [d.id]: { title: d.title, category: d.category, excerpt: d.excerpt, body: d.body, author: d.author || "Editorial Desk" } }));
+    setEdits((e) => ({ ...e, [d.id]: { title: d.title, category: d.category, excerpt: d.excerpt, body: d.body, author: d.author || "Abdul Hannan Nasir" } }));
   };
   const updateEdit = (id, key) => (e) => setEdits((prev) => ({ ...prev, [id]: { ...prev[id], [key]: e.target.value } }));
 

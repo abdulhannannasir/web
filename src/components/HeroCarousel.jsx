@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import CoverArt from "./CoverArt.jsx";
-import AuthorSeal from "./AuthorSeal.jsx";
+import Byline from "./Byline.jsx";
 
-export default function HeroCarousel({ articles, onOpen }) {
+export default function HeroCarousel({ articles, onOpen, onAuthor }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [entering, setEntering] = useState(false);
@@ -44,18 +44,25 @@ export default function HeroCarousel({ articles, onOpen }) {
       }}
       className="hero-carousel"
     >
-      <button
+      <div
         key={current.id}
+        role="button"
+        tabIndex={0}
         onClick={() => onOpen(current)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onOpen(current);
+          }
+        }}
         style={{
-          background: "none",
-          border: "none",
           textAlign: "left",
           padding: "32px 34px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           gap: 14,
+          cursor: "pointer",
           opacity: entering ? 0 : 1,
           transform: entering ? "translateY(8px)" : "translateY(0)",
           transition: "opacity 500ms var(--ease), transform 500ms var(--ease)",
@@ -66,11 +73,8 @@ export default function HeroCarousel({ articles, onOpen }) {
           {current.title}
         </h1>
         <p style={{ color: "var(--text-muted)", fontSize: 15, lineHeight: 1.6, margin: 0 }}>{current.excerpt}</p>
-        <span style={{ fontSize: 13, color: "var(--ink-soft)", fontFamily: "var(--mono)", display: "flex", alignItems: "center", gap: 8 }}>
-          <AuthorSeal name={current.author} size={22} />
-          {current.author} · {new Date(current.date).toLocaleDateString()}
-        </span>
-      </button>
+        <Byline author={current.author} date={current.date} onAuthor={onAuthor} sealSize={22} fontSize={13} />
+      </div>
 
       <div
         key={`${current.id}-art`}

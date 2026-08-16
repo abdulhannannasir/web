@@ -1,13 +1,21 @@
 import CoverArt from "./CoverArt.jsx";
-import AuthorSeal from "./AuthorSeal.jsx";
+import Byline from "./Byline.jsx";
 import useReveal from "../hooks/useReveal.js";
 
-export default function ArticleCard({ article, onOpen, delay = 0 }) {
+export default function ArticleCard({ article, onOpen, onAuthor, delay = 0 }) {
   const [ref, visible] = useReveal();
   return (
-    <button
+    <div
       ref={ref}
+      role="button"
+      tabIndex={0}
       onClick={() => onOpen(article)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen(article);
+        }
+      }}
       className={`lp-card lp-reveal${visible ? " lp-in" : ""}`}
       style={{
         textAlign: "left",
@@ -18,6 +26,7 @@ export default function ArticleCard({ article, onOpen, delay = 0 }) {
         display: "flex",
         flexDirection: "column",
         minWidth: 0,
+        cursor: "pointer",
         transitionDelay: visible ? `${delay}ms` : "0ms",
       }}
     >
@@ -34,11 +43,10 @@ export default function ArticleCard({ article, onOpen, delay = 0 }) {
         <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
           {article.excerpt.length > 100 ? article.excerpt.slice(0, 100) + "…" : article.excerpt}
         </p>
-        <span style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, fontFamily: "var(--mono)", fontSize: 11, color: "var(--ink-soft)" }}>
-          <AuthorSeal name={article.author} size={18} />
-          {article.author} · {new Date(article.date).toLocaleDateString()}
-        </span>
+        <div style={{ marginTop: "auto" }}>
+          <Byline author={article.author} date={article.date} onAuthor={onAuthor} sealSize={18} fontSize={11} />
+        </div>
       </div>
-    </button>
+    </div>
   );
 }

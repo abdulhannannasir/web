@@ -41,6 +41,7 @@ export default function App() {
   const [view, setView] = useState("home"); // home | article | write | admin
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
+  const [activeAuthor, setActiveAuthor] = useState(null);
 
   const [articles, setArticles] = useState([]);
   const [submissions, setSubmissions] = useState([]);
@@ -88,6 +89,7 @@ export default function App() {
     setView(v);
     setSelectedArticle(null);
     setActiveCategory(null);
+    setActiveAuthor(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -99,6 +101,14 @@ export default function App() {
 
   const openCategory = (category) => {
     setActiveCategory(category);
+    setActiveAuthor(null);
+    setView("home");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const openAuthor = (author) => {
+    setActiveAuthor(author);
+    setActiveCategory(null);
     setView("home");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -179,7 +189,7 @@ export default function App() {
         category: data.category,
         excerpt: data.excerpt,
         body: data.body,
-        author: "Editorial Desk",
+        author: "Abdul Hannan Nasir",
         sources: [],
         caveat: data.caveat,
       };
@@ -200,7 +210,7 @@ export default function App() {
       category: edited.category,
       excerpt: edited.excerpt,
       body: edited.body,
-      author: edited.author || "Editorial Desk",
+      author: edited.author || "Abdul Hannan Nasir",
       date: new Date().toISOString(),
       status: "published",
       sources: (aiDrafts.find((d) => d.id === id) || {}).sources || [],
@@ -284,6 +294,7 @@ export default function App() {
 
   const published = articles.filter((a) => a.status === "published");
   const visibleArticles = activeCategory ? published.filter((a) => a.category === activeCategory) : published;
+  const authorArticles = activeAuthor ? published.filter((a) => a.author === activeAuthor) : [];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -292,8 +303,8 @@ export default function App() {
       <main key={view} className="lp-fade-in" style={{ flex: 1 }}>
         {view === "home" && (
           <div className="wrap" style={{ padding: "0 20px 40px" }}>
-            {!activeCategory && <HeroCarousel articles={published} onOpen={openArticle} />}
-            {!activeCategory && <SponsoredSection items={sponsored} />}
+            {!activeCategory && !activeAuthor && <HeroCarousel articles={published} onOpen={openArticle} onAuthor={openAuthor} />}
+            {!activeCategory && !activeAuthor && <SponsoredSection items={sponsored} />}
 
             <div
               style={{
@@ -306,7 +317,9 @@ export default function App() {
             >
               <div>
                 {activeCategory ? (
-                  <CategoryRow category={activeCategory} articles={visibleArticles} onOpen={openArticle} onSeeAll={() => {}} />
+                  <CategoryRow category={activeCategory} articles={visibleArticles} onOpen={openArticle} onAuthor={openAuthor} limit={Infinity} />
+                ) : activeAuthor ? (
+                  <CategoryRow category={`Articles by ${activeAuthor}`} articles={authorArticles} onOpen={openArticle} onAuthor={openAuthor} limit={Infinity} />
                 ) : (
                   CATEGORIES.map((cat) => (
                     <CategoryRow
@@ -314,6 +327,7 @@ export default function App() {
                       category={cat}
                       articles={published.filter((a) => a.category === cat)}
                       onOpen={openArticle}
+                      onAuthor={openAuthor}
                       onSeeAll={openCategory}
                     />
                   ))
@@ -335,7 +349,7 @@ export default function App() {
           </div>
         )}
 
-        {view === "article" && <ArticlePage article={selectedArticle} onBack={() => navigate("home")} />}
+        {view === "article" && <ArticlePage article={selectedArticle} onBack={() => navigate("home")} onAuthor={openAuthor} />}
 
         {view === "write" && <WriteForUs onSubmit={handleSubmit} />}
 

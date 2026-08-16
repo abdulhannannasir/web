@@ -1,7 +1,7 @@
 import CoverArt from "./CoverArt.jsx";
-import AuthorSeal from "./AuthorSeal.jsx";
+import Byline from "./Byline.jsx";
 
-export default function ArticlePage({ article, onBack }) {
+export default function ArticlePage({ article, onBack, onAuthor }) {
   if (!article) return null;
   return (
     <article className="wrap" style={{ padding: "32px 20px 60px", maxWidth: 760, margin: "0 auto" }}>
@@ -12,9 +12,8 @@ export default function ArticlePage({ article, onBack }) {
       <h1 style={{ fontFamily: "var(--serif)", fontSize: "clamp(28px, 4vw, 42px)", lineHeight: 1.15, margin: "10px 0 14px" }}>
         {article.title}
       </h1>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "var(--mono)", fontSize: 13, color: "var(--text-muted)", marginBottom: 24 }}>
-        <AuthorSeal name={article.author} size={30} />
-        {article.author} · {new Date(article.date).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}
+      <div style={{ marginBottom: 24 }}>
+        <Byline author={article.author} date={article.date} onAuthor={onAuthor} sealSize={30} fontSize={13} />
       </div>
       <div style={{ borderRadius: 8, overflow: "hidden", marginBottom: 28, border: "1px solid var(--rule)" }}>
         {article.thumbnail ? (

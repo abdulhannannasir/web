@@ -193,6 +193,15 @@ img {
   margin-bottom: 16px;
 }
 
+.byline-name {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color var(--dur-fast) var(--ease);
+}
+button:hover .byline-name {
+  text-decoration-color: currentColor;
+}
+
 /* ---------- card elevation + hover ---------- */
 .lp-card {
   transition: transform var(--dur-med) var(--ease), box-shadow var(--dur-med) var(--ease), border-color var(--dur-med) var(--ease);
