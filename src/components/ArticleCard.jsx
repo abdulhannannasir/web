@@ -22,7 +22,11 @@ export default function ArticleCard({ article, onOpen, delay = 0 }) {
       }}
     >
       <div className="lp-card-art" style={{ aspectRatio: "16 / 10" }}>
-        <CoverArt seed={article.id} category={article.category} />
+        {article.thumbnail ? (
+          <img src={article.thumbnail} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        ) : (
+          <CoverArt seed={article.id} category={article.category} />
+        )}
       </div>
       <div style={{ padding: "14px 16px 18px", display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
         <span className="eyebrow">{article.category}</span>

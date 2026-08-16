@@ -16,8 +16,12 @@ export default function ArticlePage({ article, onBack }) {
         <AuthorSeal name={article.author} size={30} />
         {article.author} · {new Date(article.date).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}
       </div>
-      <div style={{ borderRadius: 4, overflow: "hidden", marginBottom: 28, border: "1px solid var(--rule)" }}>
-        <CoverArt seed={article.id} category={article.category} size={760} />
+      <div style={{ borderRadius: 8, overflow: "hidden", marginBottom: 28, border: "1px solid var(--rule)" }}>
+        {article.thumbnail ? (
+          <img src={article.thumbnail} alt="" style={{ width: "100%", display: "block" }} />
+        ) : (
+          <CoverArt seed={article.id} category={article.category} size={760} />
+        )}
       </div>
       {article.body.split("\n\n").map((para, i) => (
         <p key={i} style={{ fontSize: 17, lineHeight: 1.75, color: "var(--text)", marginBottom: 20 }}>

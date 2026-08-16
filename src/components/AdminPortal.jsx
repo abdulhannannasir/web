@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient.js";
 import { COUNTRIES, CATEGORIES } from "../data/seedData.js";
+import CoverArt from "./CoverArt.jsx";
 
 function LoginForm({ onSignedIn }) {
   const [email, setEmail] = useState("");
@@ -41,6 +42,123 @@ function LoginForm({ onSignedIn }) {
           {loading ? "Signing in…" : "Sign in"}
         </button>
       </form>
+    </div>
+  );
+}
+
+function resizeImageToDataUrl(file, maxWidth = 800, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = () => reject(new Error("Couldn't read that image."));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error("Couldn't read that file."));
+    reader.readAsDataURL(file);
+  });
+}
+
+function ArticlesTab({ articles, onSetThumbnail, onRemoveThumbnail }) {
+  const [busyId, setBusyId] = useState(null);
+  const [error, setError] = useState("");
+
+  const handleFile = async (article, file) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError(`"${file.name}" isn't an image file.`);
+      return;
+    }
+    setError("");
+    setBusyId(article.id);
+    try {
+      const dataUrl = await resizeImageToDataUrl(file);
+      await onSetThumbnail(article.id, dataUrl);
+    } catch (e) {
+      setError(e.message || "Couldn't process that image — try a different file.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  if (articles.length === 0) {
+    return <p style={{ fontSize: 13, color: "var(--text-muted)" }}>No published articles yet.</p>;
+  }
+
+  return (
+    <div>
+      <div style={{ background: "var(--gold-soft)", border: "1px solid var(--gold)", borderRadius: 4, padding: "10px 12px", fontSize: 13, marginBottom: 18 }}>
+        Every article uses the site's generated cover art by default. Upload your own image here to use it
+        instead — the generated design stays as the fallback the moment you remove a custom thumbnail.
+      </div>
+      {error && <div className="notice">{error}</div>}
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {articles.map((a) => (
+          <div
+            key={a.id}
+            style={{
+              display: "flex",
+              gap: 14,
+              alignItems: "center",
+              border: "1px solid var(--rule)",
+              borderRadius: 6,
+              padding: 12,
+              background: "var(--paper-raised)",
+            }}
+          >
+            <div style={{ width: 84, height: 54, borderRadius: 4, overflow: "hidden", flexShrink: 0, border: "1px solid var(--rule)" }}>
+              {a.thumbnail ? (
+                <img src={a.thumbnail} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              ) : (
+                <CoverArt seed={a.id} category={a.category} />
+              )}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="eyebrow">{a.category}</div>
+              <div
+                style={{
+                  fontFamily: "var(--serif)",
+                  fontSize: 14.5,
+                  fontWeight: 700,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {a.title}
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+              <label className="btn btn-outline" style={{ fontSize: 12, padding: "7px 12px", cursor: "pointer" }}>
+                {busyId === a.id ? "Processing…" : a.thumbnail ? "Change" : "Add thumbnail"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  disabled={busyId === a.id}
+                  onChange={(e) => handleFile(a, e.target.files?.[0])}
+                />
+              </label>
+              {a.thumbnail && (
+                <button className="btn btn-outline" style={{ fontSize: 12, padding: "7px 12px" }} onClick={() => onRemoveThumbnail(a.id)}>
+                  Remove
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -246,7 +364,7 @@ function MessagesTab({ messages }) {
 }
 
 function Tabs({ active, onChange }) {
-  const tabs = ["Submissions", "News Wire", "Legislative Updates", "Sponsored Content", "AI Drafts", "Messages"];
+  const tabs = ["Articles", "Submissions", "News Wire", "Legislative Updates", "Sponsored Content", "AI Drafts", "Messages"];
   return (
     <div style={{ display: "flex", gap: 4, borderBottom: "1px solid var(--rule)", marginBottom: 24 }}>
       {tabs.map((t) => (
@@ -367,6 +485,7 @@ export default function AdminPortal({
   aiDrafts,
   generatingDraft,
   generateDraftError,
+  articles,
   onSignedIn,
   onSignOut,
   onApproveSubmission,
@@ -381,8 +500,10 @@ export default function AdminPortal({
   onGenerateDraft,
   onPublishDraft,
   onDiscardDraft,
+  onSetThumbnail,
+  onRemoveThumbnail,
 }) {
-  const [tab, setTab] = useState("Submissions");
+  const [tab, setTab] = useState("Articles");
 
   if (!user) return <LoginForm onSignedIn={onSignedIn} />;
 
@@ -395,6 +516,9 @@ export default function AdminPortal({
         </button>
       </div>
       <Tabs active={tab} onChange={setTab} />
+      {tab === "Articles" && (
+        <ArticlesTab articles={articles} onSetThumbnail={onSetThumbnail} onRemoveThumbnail={onRemoveThumbnail} />
+      )}
       {tab === "Submissions" && (
         <SubmissionsTab submissions={submissions} onApprove={onApproveSubmission} onReject={onRejectSubmission} />
       )}

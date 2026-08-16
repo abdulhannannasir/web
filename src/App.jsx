@@ -218,6 +218,22 @@ export default function App() {
     await saveJSON("aiDrafts", next);
   };
 
+  // --- Custom thumbnails ---
+  const setThumbnail = async (id, dataUrl) => {
+    const next = articles.map((a) => (a.id === id ? { ...a, thumbnail: dataUrl } : a));
+    setArticles(next);
+    await saveJSON("articles", next);
+  };
+  const removeThumbnail = async (id) => {
+    const next = articles.map((a) => {
+      if (a.id !== id) return a;
+      const { thumbnail, ...rest } = a;
+      return rest;
+    });
+    setArticles(next);
+    await saveJSON("articles", next);
+  };
+
   // --- Admin: Sponsored Content ---
   const addSponsored = async (item) => {
     const next = [item, ...sponsored];
@@ -340,6 +356,7 @@ export default function App() {
             aiDrafts={aiDrafts}
             generatingDraft={generatingDraft}
             generateDraftError={generateDraftError}
+            articles={published}
             onSignedIn={setUser}
             onSignOut={handleSignOut}
             onApproveSubmission={approveSubmission}
@@ -354,6 +371,8 @@ export default function App() {
             onGenerateDraft={generateDraft}
             onPublishDraft={publishDraft}
             onDiscardDraft={discardDraft}
+            onSetThumbnail={setThumbnail}
+            onRemoveThumbnail={removeThumbnail}
           />
         )}
       </main>

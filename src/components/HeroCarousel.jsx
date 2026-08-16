@@ -82,7 +82,11 @@ export default function HeroCarousel({ articles, onOpen }) {
           transition: "opacity 600ms var(--ease)",
         }}
       >
-        <CoverArt seed={current.id} category={current.category} />
+        {current.thumbnail ? (
+          <img src={current.thumbnail} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        ) : (
+          <CoverArt seed={current.id} category={current.category} />
+        )}
       </div>
 
       {slides.length > 1 && (

@@ -206,10 +206,12 @@ img {
 .lp-card .lp-card-art {
   overflow: hidden;
 }
-.lp-card .lp-card-art svg {
+.lp-card .lp-card-art svg,
+.lp-card .lp-card-art img {
   transition: transform 700ms var(--ease);
 }
-.lp-card:hover .lp-card-art svg {
+.lp-card:hover .lp-card-art svg,
+.lp-card:hover .lp-card-art img {
   transform: scale(1.06);
 }
 
