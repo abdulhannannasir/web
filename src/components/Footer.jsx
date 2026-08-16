@@ -66,6 +66,9 @@ export default function Footer({ onNavigate, onCategory }) {
           <a href="#write" onClick={(e) => { e.preventDefault(); onNavigate("write"); }} style={{ display: "block", fontSize: 13.5, color: "#c9cdd6", marginBottom: 8 }}>
             Submit an article
           </a>
+          <a href="#advertise" onClick={(e) => { e.preventDefault(); onNavigate("advertise"); }} style={{ display: "block", fontSize: 13.5, color: "#c9cdd6", marginBottom: 8 }}>
+            Advertise
+          </a>
           <a href="#admin" onClick={(e) => { e.preventDefault(); onNavigate("admin"); }} style={{ display: "block", fontSize: 13.5, color: "#c9cdd6" }}>
             Admin Portal
           </a>

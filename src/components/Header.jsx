@@ -32,6 +32,9 @@ export default function Header({ onNavigate, onCategory, isAdmin }) {
           <a href="#write" onClick={(e) => { e.preventDefault(); onNavigate("write"); }}>
             WRITE FOR US
           </a>
+          <a href="#advertise" onClick={(e) => { e.preventDefault(); onNavigate("advertise"); }}>
+            ADVERTISE
+          </a>
           <a href="#admin" onClick={(e) => { e.preventDefault(); onNavigate("admin"); }}>
             {isAdmin ? "ADMIN DASHBOARD" : "ADMIN PORTAL"}
           </a>

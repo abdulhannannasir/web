@@ -16,6 +16,7 @@ import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import Terms from "./pages/Terms.jsx";
 import Privacy from "./pages/Privacy.jsx";
+import Advertise from "./pages/Advertise.jsx";
 
 // Load a JSON blob from kv_store, falling back to a default if the key
 // doesn't exist yet (i.e. nothing has been published through the Admin
@@ -256,6 +257,7 @@ export default function App() {
         {view === "contact" && <Contact onSubmit={handleContactSubmit} />}
         {view === "terms" && <Terms />}
         {view === "privacy" && <Privacy />}
+        {view === "advertise" && <Advertise onNavigate={navigate} />}
 
         {view === "admin" && (
           <AdminPortal

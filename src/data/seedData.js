@@ -1,9 +1,9 @@
 export const CATEGORIES = [
-  "Constitutional Law",
-  "Corporate & Commercial",
-  "Litigation & Dispute Resolution",
-  "Technology & Data Law",
-  "Tax & Regulatory",
+  "Commentary & Analysis",
+  "Laws & Judgments",
+  "News & Events",
+  "Law FAQs & Guides",
+  "Industry Updates",
   "International & Comparative",
 ];
 
@@ -37,7 +37,7 @@ export const SEED_ARTICLES = [
   makeArticle(
     "seed-2",
     "The Punjab Labour Code 2026: Twenty-Six Statutes, One Framework",
-    "Constitutional Law",
+    "Laws & Judgments",
     "A first look at Punjab's consolidated labour legislation and what it means for employers.",
     "Editorial Desk",
     2
@@ -45,7 +45,7 @@ export const SEED_ARTICLES = [
   makeArticle(
     "seed-3",
     "Performance Bond Encashment: What Contractors Need to Know",
-    "Corporate & Commercial",
+    "Commentary & Analysis",
     "Unpacking the legal standard for restraining unconditional bank guarantee encashment in Pakistan.",
     "Editorial Desk",
     3
@@ -53,7 +53,7 @@ export const SEED_ARTICLES = [
   makeArticle(
     "seed-4",
     "AI in the Courtroom: Pakistan's New Judicial Guidelines",
-    "Technology & Data Law",
+    "Laws & Judgments",
     "NJPMC's guidance on AI use in the judiciary, set against nine comparative jurisdictions.",
     "Editorial Desk",
     4
@@ -61,7 +61,7 @@ export const SEED_ARTICLES = [
   makeArticle(
     "seed-5",
     "Absorption vs. Additive Theory Under the Income Tax Ordinance 2001",
-    "Tax & Regulatory",
+    "Commentary & Analysis",
     "A technical look at how minimum tax provisions interact with normal tax liability.",
     "Editorial Desk",
     5
@@ -69,10 +69,34 @@ export const SEED_ARTICLES = [
   makeArticle(
     "seed-6",
     "Bills of Lading as Prima Facie, Not Conclusive, Evidence of Title",
-    "Litigation & Dispute Resolution",
+    "Laws & Judgments",
     "Tracing the doctrine from Lickbarrow v. Mason through Pakistani case law.",
     "Editorial Desk",
     6
+  ),
+  makeArticle(
+    "seed-7",
+    "How to Guide: Filing a Consumer Complaint in Pakistan",
+    "Law FAQs & Guides",
+    "A step-by-step walkthrough for consumers seeking redress under provincial consumer protection law.",
+    "Editorial Desk",
+    7
+  ),
+  makeArticle(
+    "seed-8",
+    "CCP's Merger Control Enforcement Gap: A News Roundup",
+    "News & Events",
+    "Recent commentary and reporting on enforcement gaps in Pakistan's merger control regime.",
+    "Editorial Desk",
+    8
+  ),
+  makeArticle(
+    "seed-9",
+    "Legal Sector Snapshot: Hiring Trends Across Pakistani Law Firms",
+    "Industry Updates",
+    "A look at associate hiring, lateral moves, and practice-area growth across major Pakistani firms.",
+    "Editorial Desk",
+    9
   ),
 ];
 
