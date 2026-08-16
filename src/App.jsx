@@ -243,6 +243,11 @@ export default function App() {
     setArticles(next);
     await saveJSON("articles", next);
   };
+  const deleteArticle = async (id) => {
+    const next = articles.filter((a) => a.id !== id);
+    setArticles(next);
+    await saveJSON("articles", next);
+  };
 
   // --- Admin: Sponsored Content ---
   const addSponsored = async (item) => {
@@ -387,6 +392,7 @@ export default function App() {
             onDiscardDraft={discardDraft}
             onSetThumbnail={setThumbnail}
             onRemoveThumbnail={removeThumbnail}
+            onDeleteArticle={deleteArticle}
           />
         )}
       </main>

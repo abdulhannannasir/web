@@ -1,6 +1,7 @@
-// Signature visual: a luminous, grain-textured gradient mark, deterministic
-// per article and tinted by category — evoking ink and gold pressed into
-// paper, not a stock photo or a flat badge.
+// Clean, crisp generative cover art — deterministic per article, tinted by
+// category. Sharp overlapping forms and a solid gradient field, not a
+// blurred/grainy texture, so it reads as a considered editorial pattern
+// rather than a placeholder.
 
 function seedFromString(str) {
   let h = 2166136261;
@@ -22,18 +23,16 @@ function mulberry32(seed) {
   };
 }
 
-// Category-tinted palettes — each a two-color mood drawn from the same
-// ink/wax/gold universe, so every category reads as part of one family
-// while remaining visually distinct.
+// Category-tinted two-color moods drawn from the editorial accent palette.
 const CATEGORY_PALETTES = {
-  "Commentary & Analysis": ["#8B2332", "#4A1F3D"],
-  "Laws & Judgments": ["#14202E", "#1F5A56"],
-  "News & Events": ["#B8935A", "#8B2332"],
-  "Law FAQs & Guides": ["#1F5A56", "#B8935A"],
-  "Industry Updates": ["#4A1F3D", "#14202E"],
-  "International & Comparative": ["#B8935A", "#1F5A56"],
+  "Commentary & Analysis": ["#800020", "#5c0017"],
+  "Laws & Judgments": ["#1c352d", "#2f4d42"],
+  "News & Events": ["#c07d2b", "#800020"],
+  "Law FAQs & Guides": ["#1c352d", "#c07d2b"],
+  "Industry Updates": ["#5c0017", "#1c352d"],
+  "International & Comparative": ["#c07d2b", "#1c352d"],
 };
-const FALLBACK_PALETTE = ["#8B2332", "#14202E"];
+const FALLBACK_PALETTE = ["#800020", "#1c352d"];
 
 function hexToRgb(hex) {
   const n = parseInt(hex.slice(1), 16);
@@ -55,19 +54,26 @@ export default function CoverArt({ seed = "article", category = "", size = 320, 
   const cx = size / 2;
   const cy = size / 2;
 
-  // 3 soft blobs, positioned and sized deterministically from the seed.
-  const blobs = Array.from({ length: 3 }, (_, i) => {
+  // 2-3 crisp, cleanly overlapping arcs/circles — no blur, defined edges.
+  const shapeCount = 2 + (n % 2);
+  const shapes = Array.from({ length: shapeCount }, (_, i) => {
     const angle = rand() * Math.PI * 2;
-    const dist = size * (0.08 + rand() * 0.22);
+    const dist = size * (0.05 + rand() * 0.28);
     return {
       key: i,
       cx: cx + dist * Math.cos(angle),
       cy: cy + dist * Math.sin(angle),
-      r: size * (0.32 + rand() * 0.26),
-      t: i / 2,
-      opacity: 0.55 + rand() * 0.3,
+      r: size * (0.22 + rand() * 0.24),
+      opacity: 0.5 + i * 0.18,
     };
   });
+
+  // fine concentric ring texture for editorial polish, kept crisp (no blur)
+  const ringCount = 3;
+  const rings = Array.from({ length: ringCount }, (_, i) => ({
+    key: i,
+    r: size * (0.16 + i * 0.09),
+  }));
 
   const markAngle = rand() * 360;
 
@@ -83,36 +89,30 @@ export default function CoverArt({ seed = "article", category = "", size = 320, 
     >
       <defs>
         <linearGradient id={`${uid}-bg`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={mixColor(colorA, colorB, 0.15)} />
-          <stop offset="100%" stopColor={mixColor(colorA, colorB, 0.85)} />
+          <stop offset="0%" stopColor={mixColor(colorA, colorB, 0.1)} />
+          <stop offset="100%" stopColor={mixColor(colorA, colorB, 0.9)} />
         </linearGradient>
-        <filter id={`${uid}-blur`}>
-          <feGaussianBlur stdDeviation={size * 0.09} />
-        </filter>
-        <filter id={`${uid}-grain`}>
-          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed={n % 100} stitchTiles="stitch" result="noise" />
-          <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0" />
-        </filter>
       </defs>
 
       <rect width={size} height={size} fill={`url(#${uid}-bg)`} />
 
-      <g filter={`url(#${uid}-blur)`}>
-        {blobs.map((b) => (
-          <circle key={b.key} cx={b.cx} cy={b.cy} r={b.r} fill={mixColor(colorA, colorB, b.t)} opacity={b.opacity} />
+      {shapes.map((s) => (
+        <circle key={s.key} cx={s.cx} cy={s.cy} r={s.r} fill="#FDFBF7" opacity={s.opacity * 0.14} />
+      ))}
+
+      <g opacity={0.5}>
+        {rings.map((r) => (
+          <circle key={r.key} cx={cx} cy={cy} r={r.r} fill="none" stroke="#FDFBF7" strokeWidth={1} opacity={0.35} />
         ))}
       </g>
 
-      {/* fine grain texture, evokes pressed paper rather than flat digital gradient */}
-      <rect width={size} height={size} filter={`url(#${uid}-grain)`} opacity={0.5} />
-
-      {/* embossed corner mark — small, tasteful, not a giant central monogram */}
-      <g transform={`translate(${size * 0.86}, ${size * 0.86}) rotate(${markAngle})`} opacity={0.85}>
-        <circle r={size * 0.045} fill="none" stroke="#F7F4EE" strokeWidth={size * 0.006} opacity={0.9} />
-        <circle r={size * 0.018} fill="#F7F4EE" opacity={0.9} />
+      {/* embossed corner mark — small, tasteful */}
+      <g transform={`translate(${size * 0.87}, ${size * 0.87}) rotate(${markAngle})`} opacity={0.9}>
+        <circle r={size * 0.038} fill="none" stroke="#FDFBF7" strokeWidth={size * 0.006} opacity={0.85} />
+        <circle r={size * 0.014} fill="#FDFBF7" opacity={0.85} />
       </g>
 
-      <rect width={size} height={size} fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
+      <rect width={size} height={size} fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="1" />
     </svg>
   );
 }

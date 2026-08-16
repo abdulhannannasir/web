@@ -16,28 +16,61 @@ export default function NewsletterSignup({ onSubscribe }) {
   };
 
   return (
-    <div style={{ border: "1px solid var(--rule)", borderRadius: 4, background: "var(--paper-raised)", padding: 20, marginBottom: 24 }}>
-      <div style={{ fontFamily: "var(--serif)", fontWeight: 700, fontSize: 17, marginBottom: 6 }}>Weekly digest</div>
-      <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 12 }}>
+    <div
+      style={{
+        border: "1px solid #33302d",
+        borderRadius: 14,
+        background: "#1c1917",
+        color: "#f5f5f4",
+        padding: 22,
+        marginBottom: 24,
+      }}
+    >
+      <div style={{ fontFamily: "var(--serif)", fontWeight: 700, fontSize: 19, marginBottom: 6 }}>Weekly digest</div>
+      <p style={{ fontSize: 13, color: "#a8a29e", marginBottom: 14, lineHeight: 1.5 }}>
         The week's legal analysis and regulatory updates, in one email.
       </p>
       {status === "done" ? (
-        <div className="notice" style={{ marginBottom: 0 }}>You're subscribed. Thanks!</div>
+        <div style={{ background: "rgba(192,125,43,0.15)", border: "1px solid rgba(192,125,43,0.4)", borderRadius: 8, padding: "10px 12px", fontSize: 13, color: "#f5f5f4" }}>
+          You're subscribed. Thanks!
+        </div>
       ) : (
-        <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8 }}>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <input
             type="email"
             placeholder="you@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ flex: 1, padding: "9px 10px", border: "1px solid var(--rule)", borderRadius: 3, fontSize: 13 }}
+            style={{
+              padding: "11px 12px",
+              border: "1px solid #44403c",
+              borderRadius: 8,
+              fontSize: 13.5,
+              background: "#292524",
+              color: "#f5f5f4",
+            }}
           />
-          <button type="submit" className="btn btn-seal" style={{ fontSize: 13, padding: "9px 14px" }}>
+          <button
+            type="submit"
+            style={{
+              background: "var(--gold)",
+              color: "#1c1917",
+              border: "none",
+              borderRadius: 8,
+              padding: "11px 14px",
+              fontSize: 13.5,
+              fontWeight: 700,
+              cursor: "pointer",
+              transition: "opacity var(--dur-fast) var(--ease)",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.85"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+          >
             Subscribe
           </button>
         </form>
       )}
-      {status === "error" && <div style={{ color: "var(--seal-dark)", fontSize: 12, marginTop: 6 }}>Enter a valid email.</div>}
+      {status === "error" && <div style={{ color: "#f0a0a0", fontSize: 12, marginTop: 8 }}>Enter a valid email.</div>}
     </div>
   );
 }

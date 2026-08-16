@@ -70,9 +70,10 @@ function resizeImageToDataUrl(file, maxWidth = 800, quality = 0.82) {
   });
 }
 
-function ArticlesTab({ articles, onSetThumbnail, onRemoveThumbnail }) {
+function ArticlesTab({ articles, onSetThumbnail, onRemoveThumbnail, onDelete }) {
   const [busyId, setBusyId] = useState(null);
   const [error, setError] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const handleFile = async (article, file) => {
     if (!file) return;
@@ -153,6 +154,26 @@ function ArticlesTab({ articles, onSetThumbnail, onRemoveThumbnail }) {
               {a.thumbnail && (
                 <button className="btn btn-outline" style={{ fontSize: 12, padding: "7px 12px" }} onClick={() => onRemoveThumbnail(a.id)}>
                   Remove
+                </button>
+              )}
+              {confirmDeleteId === a.id ? (
+                <>
+                  <button
+                    style={{ fontSize: 12, padding: "7px 12px", background: "var(--seal)", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer" }}
+                    onClick={() => { onDelete(a.id); setConfirmDeleteId(null); }}
+                  >
+                    Confirm delete
+                  </button>
+                  <button className="btn btn-outline" style={{ fontSize: 12, padding: "7px 12px" }} onClick={() => setConfirmDeleteId(null)}>
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  style={{ fontSize: 12, padding: "7px 12px", background: "none", border: "none", color: "var(--seal)", cursor: "pointer" }}
+                  onClick={() => setConfirmDeleteId(a.id)}
+                >
+                  Delete
                 </button>
               )}
             </div>
@@ -502,6 +523,7 @@ export default function AdminPortal({
   onDiscardDraft,
   onSetThumbnail,
   onRemoveThumbnail,
+  onDeleteArticle,
 }) {
   const [tab, setTab] = useState("Articles");
 
@@ -517,7 +539,7 @@ export default function AdminPortal({
       </div>
       <Tabs active={tab} onChange={setTab} />
       {tab === "Articles" && (
-        <ArticlesTab articles={articles} onSetThumbnail={onSetThumbnail} onRemoveThumbnail={onRemoveThumbnail} />
+        <ArticlesTab articles={articles} onSetThumbnail={onSetThumbnail} onRemoveThumbnail={onRemoveThumbnail} onDelete={onDeleteArticle} />
       )}
       {tab === "Submissions" && (
         <SubmissionsTab submissions={submissions} onApprove={onApproveSubmission} onReject={onRejectSubmission} />

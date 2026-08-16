@@ -1,5 +1,6 @@
 import CoverArt from "./CoverArt.jsx";
 import Byline from "./Byline.jsx";
+import Badge from "./Badge.jsx";
 import useReveal from "../hooks/useReveal.js";
 
 export default function ArticleCard({ article, onOpen, onAuthor, delay = 0 }) {
@@ -21,7 +22,7 @@ export default function ArticleCard({ article, onOpen, onAuthor, delay = 0 }) {
         textAlign: "left",
         background: "var(--paper-raised)",
         border: "1px solid var(--rule)",
-        borderRadius: 6,
+        borderRadius: 12,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
@@ -37,13 +38,15 @@ export default function ArticleCard({ article, onOpen, onAuthor, delay = 0 }) {
           <CoverArt seed={article.id} category={article.category} />
         )}
       </div>
-      <div style={{ padding: "14px 16px 18px", display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
-        <span className="eyebrow">{article.category}</span>
-        <h3 style={{ fontFamily: "var(--serif)", fontSize: 17, lineHeight: 1.3, margin: 0 }}>{article.title}</h3>
-        <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
+      <div style={{ padding: "16px 18px 20px", display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
+        <Badge>{article.category}</Badge>
+        <h3 style={{ fontFamily: "var(--serif)", fontWeight: 700, fontSize: 18, lineHeight: 1.28, margin: 0, color: "var(--ink)" }}>
+          {article.title}
+        </h3>
+        <p style={{ fontSize: 13.5, color: "var(--text-muted)", margin: 0, lineHeight: 1.55 }}>
           {article.excerpt.length > 100 ? article.excerpt.slice(0, 100) + "…" : article.excerpt}
         </p>
-        <div style={{ marginTop: "auto" }}>
+        <div style={{ marginTop: "auto", paddingTop: 4 }}>
           <Byline author={article.author} date={article.date} onAuthor={onAuthor} sealSize={18} fontSize={11} />
         </div>
       </div>

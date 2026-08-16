@@ -1,21 +1,25 @@
 import CoverArt from "./CoverArt.jsx";
 import Byline from "./Byline.jsx";
+import Badge from "./Badge.jsx";
+import readingTime from "../utils/readingTime.js";
 
 export default function ArticlePage({ article, onBack, onAuthor }) {
   if (!article) return null;
+  const mins = readingTime(article.body);
   return (
     <article className="wrap" style={{ padding: "32px 20px 60px", maxWidth: 760, margin: "0 auto" }}>
       <button onClick={onBack} className="btn btn-outline" style={{ marginBottom: 24, fontSize: 13 }}>
         ← Back
       </button>
-      <span className="eyebrow">{article.category}</span>
-      <h1 style={{ fontFamily: "var(--serif)", fontSize: "clamp(28px, 4vw, 42px)", lineHeight: 1.15, margin: "10px 0 14px" }}>
+      <Badge>{article.category}</Badge>
+      <h1 style={{ fontFamily: "var(--serif)", fontWeight: 800, fontSize: "clamp(28px, 4vw, 44px)", lineHeight: 1.1, letterSpacing: "-0.01em", margin: "14px 0 16px", color: "var(--ink)" }}>
         {article.title}
       </h1>
-      <div style={{ marginBottom: 24 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", marginBottom: 28 }}>
         <Byline author={article.author} date={article.date} onAuthor={onAuthor} sealSize={30} fontSize={13} />
+        <span style={{ fontFamily: "var(--sans)", fontSize: 13, color: "var(--text-muted)" }}>· {mins} min read</span>
       </div>
-      <div style={{ borderRadius: 8, overflow: "hidden", marginBottom: 28, border: "1px solid var(--rule)" }}>
+      <div style={{ borderRadius: 12, overflow: "hidden", marginBottom: 30, border: "1px solid var(--rule)" }}>
         {article.thumbnail ? (
           <img src={article.thumbnail} alt="" style={{ width: "100%", display: "block" }} />
         ) : (
@@ -23,7 +27,7 @@ export default function ArticlePage({ article, onBack, onAuthor }) {
         )}
       </div>
       {article.body.split("\n\n").map((para, i) => (
-        <p key={i} style={{ fontSize: 17, lineHeight: 1.75, color: "var(--text)", marginBottom: 20 }}>
+        <p key={i} style={{ fontFamily: "var(--serif)", fontSize: 18.5, lineHeight: 1.75, color: "var(--text)", marginBottom: 22 }}>
           {para}
         </p>
       ))}
