@@ -78,7 +78,24 @@ build command `npm run build`, publish directory `dist`.
 - **Public pages:** Home, Article view, Write for Us, About, Contact, Terms of Service, Privacy Policy
 - **Newsletter signup** — captures emails to the `subscribers` key in `kv_store`; no email-sending is wired up yet, so you'll need to export the list and send through a provider (Mailchimp, Resend, etc.) or connect one directly.
 - **Sponsored Content** — admin-managed, clearly labeled paid placements shown on the homepage. Always disclosed as sponsored; never mixed into editorial content unlabeled.
-- **Admin Dashboard tabs:** Submissions (approve/reject), News Wire, Legislative Updates, Sponsored Content, Messages (from the Contact form)
+- **Admin Dashboard tabs:** Submissions (approve/reject), News Wire, Legislative Updates, Sponsored Content, AI Drafts, Messages (from the Contact form)
+
+### AI Drafts
+
+The Admin Dashboard has an "AI Drafts" tab for generating candidate news/commentary posts. Five example
+drafts ship pre-loaded — each was written with real, verified sources (linked in the draft) as a working
+demonstration of the review flow. **Nothing publishes automatically.** Every draft requires you to tick
+"I have verified every citation, statute reference, and factual claim" before the Publish button unlocks.
+
+To generate *new* drafts going forward:
+1. Get an API key from [console.anthropic.com](https://console.anthropic.com)
+2. Add it to your Vercel project as an environment variable named `ANTHROPIC_API_KEY`
+3. Use the "Generate a new draft" form in the AI Drafts tab
+
+Important limitation: ongoing generation via `/api/generate-draft.js` does **not** use live web search — the
+model can only draw on its training data, so treat every date, citation, and figure in a freshly generated
+draft as unverified until you check it yourself. This is meaningfully less reliable than the 5 seed drafts,
+which were checked against real sources at build time.
 
 All of the above use the same `kv_store` table — no schema changes needed beyond the original `supabase/schema.sql`.
 

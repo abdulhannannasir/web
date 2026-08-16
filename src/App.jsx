@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase, storageGet, storageSet } from "./supabaseClient.js";
-import { CATEGORIES, SEED_ARTICLES, SEED_NEWS, SEED_LEGISLATIVE } from "./data/seedData.js";
+import { CATEGORIES, SEED_ARTICLES, SEED_NEWS, SEED_LEGISLATIVE, SEED_AI_DRAFTS } from "./data/seedData.js";
 
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
@@ -49,11 +49,14 @@ export default function App() {
   const [sponsored, setSponsored] = useState([]);
   const [messages, setMessages] = useState([]);
   const [subscribers, setSubscribers] = useState([]);
+  const [aiDrafts, setAiDrafts] = useState([]);
+  const [generatingDraft, setGeneratingDraft] = useState(false);
+  const [generateDraftError, setGenerateDraftError] = useState("");
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     (async () => {
-      const [a, s, n, l, sp, msg, subs] = await Promise.all([
+      const [a, s, n, l, sp, msg, subs, drafts] = await Promise.all([
         loadJSON("articles", SEED_ARTICLES),
         loadJSON("submissions", []),
         loadJSON("newsWire", SEED_NEWS),
@@ -61,6 +64,7 @@ export default function App() {
         loadJSON("sponsored", []),
         loadJSON("messages", []),
         loadJSON("subscribers", []),
+        loadJSON("aiDrafts", SEED_AI_DRAFTS),
       ]);
       setArticles(a);
       setSubmissions(s);
@@ -69,6 +73,7 @@ export default function App() {
       setSponsored(sp);
       setMessages(msg);
       setSubscribers(subs);
+      setAiDrafts(drafts);
       setLoading(false);
     })();
 
@@ -154,6 +159,63 @@ export default function App() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+  };
+
+  // --- AI Drafts ---
+  const generateDraft = async (topic, category) => {
+    setGeneratingDraft(true);
+    setGenerateDraftError("");
+    try {
+      const res = await fetch("/api/generate-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic, category }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to generate draft.");
+      const draft = {
+        id: `ai-${Date.now()}`,
+        title: data.title,
+        category: data.category,
+        excerpt: data.excerpt,
+        body: data.body,
+        author: "Editorial Desk",
+        sources: [],
+        caveat: data.caveat,
+      };
+      const next = [draft, ...aiDrafts];
+      setAiDrafts(next);
+      await saveJSON("aiDrafts", next);
+    } catch (err) {
+      setGenerateDraftError(String(err.message || err));
+    } finally {
+      setGeneratingDraft(false);
+    }
+  };
+
+  const publishDraft = async (id, edited) => {
+    const published = {
+      id: `art-${Date.now()}`,
+      title: edited.title,
+      category: edited.category,
+      excerpt: edited.excerpt,
+      body: edited.body,
+      author: edited.author || "Editorial Desk",
+      date: new Date().toISOString(),
+      status: "published",
+      sources: (aiDrafts.find((d) => d.id === id) || {}).sources || [],
+    };
+    const nextArticles = [published, ...articles];
+    const nextDrafts = aiDrafts.filter((d) => d.id !== id);
+    setArticles(nextArticles);
+    setAiDrafts(nextDrafts);
+    await Promise.all([saveJSON("articles", nextArticles), saveJSON("aiDrafts", nextDrafts)]);
+  };
+
+  const discardDraft = async (id) => {
+    const next = aiDrafts.filter((d) => d.id !== id);
+    setAiDrafts(next);
+    await saveJSON("aiDrafts", next);
   };
 
   // --- Admin: Sponsored Content ---
@@ -267,6 +329,9 @@ export default function App() {
             legislative={legislative}
             sponsored={sponsored}
             messages={messages}
+            aiDrafts={aiDrafts}
+            generatingDraft={generatingDraft}
+            generateDraftError={generateDraftError}
             onSignedIn={setUser}
             onSignOut={handleSignOut}
             onApproveSubmission={approveSubmission}
@@ -278,6 +343,9 @@ export default function App() {
             onAddSponsored={addSponsored}
             onToggleSponsored={toggleSponsored}
             onRemoveSponsored={removeSponsored}
+            onGenerateDraft={generateDraft}
+            onPublishDraft={publishDraft}
+            onDiscardDraft={discardDraft}
           />
         )}
       </main>

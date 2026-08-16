@@ -24,6 +24,20 @@ export default function ArticlePage({ article, onBack }) {
           {para}
         </p>
       ))}
+      {article.sources && article.sources.length > 0 && (
+        <div style={{ marginTop: 32, paddingTop: 20, borderTop: "1px solid var(--rule)" }}>
+          <div className="eyebrow" style={{ marginBottom: 10 }}>Sources</div>
+          <ul style={{ paddingLeft: 20, margin: 0 }}>
+            {article.sources.map((s, i) => (
+              <li key={i} style={{ fontSize: 13.5, marginBottom: 6 }}>
+                <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--oxblood)" }}>
+                  {s.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </article>
   );
 }

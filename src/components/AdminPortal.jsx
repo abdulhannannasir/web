@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient.js";
-import { COUNTRIES } from "../data/seedData.js";
+import { COUNTRIES, CATEGORIES } from "../data/seedData.js";
 
 function LoginForm({ onSignedIn }) {
   const [email, setEmail] = useState("");
@@ -41,6 +41,133 @@ function LoginForm({ onSignedIn }) {
           {loading ? "Signing in…" : "Sign in"}
         </button>
       </form>
+    </div>
+  );
+}
+
+function AIDraftsTab({ drafts, onPublish, onDiscard, onGenerate, generating, generateError }) {
+  const [expanded, setExpanded] = useState(null);
+  const [edits, setEdits] = useState({});
+  const [verified, setVerified] = useState({});
+  const [topic, setTopic] = useState("");
+  const [category, setCategory] = useState(CATEGORIES[0]);
+
+  const startEdit = (d) => {
+    setExpanded(d.id);
+    setEdits((e) => ({ ...e, [d.id]: { title: d.title, category: d.category, excerpt: d.excerpt, body: d.body, author: d.author || "Editorial Desk" } }));
+  };
+  const updateEdit = (id, key) => (e) => setEdits((prev) => ({ ...prev, [id]: { ...prev[id], [key]: e.target.value } }));
+
+  const submitGenerate = (e) => {
+    e.preventDefault();
+    if (!topic.trim()) return;
+    onGenerate(topic.trim(), category);
+    setTopic("");
+  };
+
+  return (
+    <div>
+      <div style={{ background: "var(--brass-soft)", border: "1px solid var(--brass)", borderRadius: 4, padding: "12px 14px", fontSize: 13, marginBottom: 20 }}>
+        <strong>AI-generated content.</strong> Nothing here is public. Every draft requires you to confirm you've
+        checked its citations and legal claims before it can be published — verify against the linked sources (or
+        independently, for anything auto-generated later without live search grounding) before publishing.
+      </div>
+
+      <form onSubmit={submitGenerate} style={{ border: "1px solid var(--rule)", borderRadius: 4, padding: 14, marginBottom: 24, background: "var(--paper-raised)" }}>
+        <div style={{ fontFamily: "var(--serif)", fontWeight: 700, fontSize: 15, marginBottom: 10 }}>Generate a new draft</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
+          <input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Topic (e.g. 'recent SBP fintech guidance')" style={{ padding: "9px 10px", border: "1px solid var(--rule)", borderRadius: 3, fontSize: 13.5 }} />
+          <select value={category} onChange={(e) => setCategory(e.target.value)} style={{ padding: "9px 10px", border: "1px solid var(--rule)", borderRadius: 3, fontSize: 13.5 }}>
+            {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+        <button type="submit" className="btn btn-oxblood" disabled={generating} style={{ fontSize: 13 }}>
+          {generating ? "Generating…" : "Generate draft"}
+        </button>
+        {generateError && <div style={{ color: "var(--oxblood-dark)", fontSize: 12.5, marginTop: 8 }}>{generateError}</div>}
+        <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 8 }}>
+          Requires an ANTHROPIC_API_KEY set in your deployment's environment variables. This path does not use live
+          web search — treat every claim and citation as unverified until you check it yourself.
+        </div>
+      </form>
+
+      {drafts.length === 0 && <p style={{ fontSize: 13, color: "var(--text-muted)" }}>No AI drafts pending.</p>}
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {drafts.map((d) => {
+          const isOpen = expanded === d.id;
+          const e = edits[d.id] || d;
+          const isVerified = !!verified[d.id];
+          return (
+            <div key={d.id} style={{ border: "1px solid var(--rule)", borderRadius: 4, padding: 16, background: "var(--paper-raised)" }}>
+              <div className="eyebrow">{d.category}</div>
+              <h3 style={{ fontFamily: "var(--serif)", fontSize: 16, margin: "4px 0" }}>{d.title}</h3>
+              <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 8 }}>{d.excerpt}</p>
+
+              {d.sources && d.sources.length > 0 && (
+                <div style={{ marginBottom: 10 }}>
+                  <div style={{ fontSize: 11.5, fontWeight: 600, color: "var(--ink-soft)", marginBottom: 4 }}>Sources to verify:</div>
+                  {d.sources.map((s, i) => (
+                    <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" style={{ display: "block", fontSize: 12.5, color: "var(--oxblood)", marginBottom: 2 }}>
+                      {s.label} ↗
+                    </a>
+                  ))}
+                </div>
+              )}
+
+              {!isOpen && (
+                <button className="btn btn-outline" style={{ fontSize: 12.5, padding: "7px 12px" }} onClick={() => startEdit(d)}>
+                  Review &amp; edit
+                </button>
+              )}
+
+              {isOpen && (
+                <div>
+                  <div className="field">
+                    <label>Title</label>
+                    <input value={e.title} onChange={updateEdit(d.id, "title")} />
+                  </div>
+                  <div className="field">
+                    <label>Author</label>
+                    <input value={e.author} onChange={updateEdit(d.id, "author")} />
+                  </div>
+                  <div className="field">
+                    <label>Excerpt</label>
+                    <textarea value={e.excerpt} onChange={updateEdit(d.id, "excerpt")} rows={2} />
+                  </div>
+                  <div className="field">
+                    <label>Body</label>
+                    <textarea value={e.body} onChange={updateEdit(d.id, "body")} rows={12} />
+                  </div>
+
+                  <label style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 13, marginBottom: 14, cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={isVerified}
+                      onChange={(ev) => setVerified((v) => ({ ...v, [d.id]: ev.target.checked }))}
+                      style={{ marginTop: 3 }}
+                    />
+                    I have verified every citation, statute reference, and factual claim in this draft.
+                  </label>
+
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <button
+                      className="btn btn-oxblood"
+                      style={{ fontSize: 13, padding: "8px 14px", opacity: isVerified ? 1 : 0.4, cursor: isVerified ? "pointer" : "not-allowed" }}
+                      disabled={!isVerified}
+                      onClick={() => onPublish(d.id, e)}
+                    >
+                      Publish
+                    </button>
+                    <button className="btn btn-outline" style={{ fontSize: 13, padding: "8px 14px" }} onClick={() => onDiscard(d.id)}>
+                      Discard
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -119,7 +246,7 @@ function MessagesTab({ messages }) {
 }
 
 function Tabs({ active, onChange }) {
-  const tabs = ["Submissions", "News Wire", "Legislative Updates", "Sponsored Content", "Messages"];
+  const tabs = ["Submissions", "News Wire", "Legislative Updates", "Sponsored Content", "AI Drafts", "Messages"];
   return (
     <div style={{ display: "flex", gap: 4, borderBottom: "1px solid var(--rule)", marginBottom: 24 }}>
       {tabs.map((t) => (
@@ -237,6 +364,9 @@ export default function AdminPortal({
   legislative,
   sponsored,
   messages,
+  aiDrafts,
+  generatingDraft,
+  generateDraftError,
   onSignedIn,
   onSignOut,
   onApproveSubmission,
@@ -248,6 +378,9 @@ export default function AdminPortal({
   onAddSponsored,
   onToggleSponsored,
   onRemoveSponsored,
+  onGenerateDraft,
+  onPublishDraft,
+  onDiscardDraft,
 }) {
   const [tab, setTab] = useState("Submissions");
 
@@ -269,6 +402,16 @@ export default function AdminPortal({
       {tab === "Legislative Updates" && <WireTab data={legislative} onAdd={onAddLegislative} onRemove={onRemoveLegislative} />}
       {tab === "Sponsored Content" && (
         <SponsoredTab items={sponsored} onAdd={onAddSponsored} onToggle={onToggleSponsored} onRemove={onRemoveSponsored} />
+      )}
+      {tab === "AI Drafts" && (
+        <AIDraftsTab
+          drafts={aiDrafts}
+          onPublish={onPublishDraft}
+          onDiscard={onDiscardDraft}
+          onGenerate={onGenerateDraft}
+          generating={generatingDraft}
+          generateError={generateDraftError}
+        />
       )}
       {tab === "Messages" && <MessagesTab messages={messages} />}
     </div>
