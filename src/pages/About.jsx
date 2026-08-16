@@ -12,7 +12,7 @@ export default function About() {
       <p style={{ fontSize: 15, lineHeight: 1.7, color: "var(--text)" }}>
         Original analysis, commentary, and explainers from practitioners, academics, and students. Every submission
         is reviewed editorially before publication — see our{" "}
-        <a href="#write" style={{ color: "var(--oxblood)" }}>
+        <a href="#write" style={{ color: "var(--seal)" }}>
           Write for Us
         </a>{" "}
         guidelines for what we look for.

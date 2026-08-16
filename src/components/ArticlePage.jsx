@@ -17,7 +17,7 @@ export default function ArticlePage({ article, onBack }) {
         {article.author} · {new Date(article.date).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}
       </div>
       <div style={{ borderRadius: 4, overflow: "hidden", marginBottom: 28, border: "1px solid var(--rule)" }}>
-        <CoverArt seed={article.id} size={760} />
+        <CoverArt seed={article.id} category={article.category} size={760} />
       </div>
       {article.body.split("\n\n").map((para, i) => (
         <p key={i} style={{ fontSize: 17, lineHeight: 1.75, color: "var(--text)", marginBottom: 20 }}>
@@ -30,7 +30,7 @@ export default function ArticlePage({ article, onBack }) {
           <ul style={{ paddingLeft: 20, margin: 0 }}>
             {article.sources.map((s, i) => (
               <li key={i} style={{ fontSize: 13.5, marginBottom: 6 }}>
-                <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--oxblood)" }}>
+                <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--seal)" }}>
                   {s.label}
                 </a>
               </li>

@@ -18,9 +18,9 @@ export default function SponsoredSection({ items }) {
             fontSize: 10.5,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
-            background: "var(--brass-soft)",
-            color: "var(--brass)",
-            border: "1px solid var(--brass)",
+            background: "var(--gold-soft)",
+            color: "var(--gold)",
+            border: "1px solid var(--gold)",
             padding: "3px 8px",
             borderRadius: 3,
           }}
@@ -38,13 +38,13 @@ export default function SponsoredSection({ items }) {
             rel="noopener noreferrer sponsored"
             style={{
               display: "block",
-              border: "1px solid var(--brass)",
+              border: "1px solid var(--gold)",
               borderRadius: 4,
               padding: 16,
               background: "var(--paper-raised)",
             }}
           >
-            <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--brass)", marginBottom: 6 }}>
+            <div style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--gold)", marginBottom: 6 }}>
               {s.firmName}
             </div>
             <div style={{ fontFamily: "var(--serif)", fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{s.title}</div>

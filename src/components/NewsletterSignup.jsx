@@ -32,12 +32,12 @@ export default function NewsletterSignup({ onSubscribe }) {
             onChange={(e) => setEmail(e.target.value)}
             style={{ flex: 1, padding: "9px 10px", border: "1px solid var(--rule)", borderRadius: 3, fontSize: 13 }}
           />
-          <button type="submit" className="btn btn-oxblood" style={{ fontSize: 13, padding: "9px 14px" }}>
+          <button type="submit" className="btn btn-seal" style={{ fontSize: 13, padding: "9px 14px" }}>
             Subscribe
           </button>
         </form>
       )}
-      {status === "error" && <div style={{ color: "var(--oxblood-dark)", fontSize: 12, marginTop: 6 }}>Enter a valid email.</div>}
+      {status === "error" && <div style={{ color: "var(--seal-dark)", fontSize: 12, marginTop: 6 }}>Enter a valid email.</div>}
     </div>
   );
 }

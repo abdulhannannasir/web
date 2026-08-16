@@ -37,7 +37,7 @@ function LoginForm({ onSignedIn }) {
           <label htmlFor="password">Password</label>
           <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
-        <button type="submit" className="btn btn-oxblood" disabled={loading} style={{ width: "100%" }}>
+        <button type="submit" className="btn btn-seal" disabled={loading} style={{ width: "100%" }}>
           {loading ? "Signing in…" : "Sign in"}
         </button>
       </form>
@@ -67,7 +67,7 @@ function AIDraftsTab({ drafts, onPublish, onDiscard, onGenerate, generating, gen
 
   return (
     <div>
-      <div style={{ background: "var(--brass-soft)", border: "1px solid var(--brass)", borderRadius: 4, padding: "12px 14px", fontSize: 13, marginBottom: 20 }}>
+      <div style={{ background: "var(--gold-soft)", border: "1px solid var(--gold)", borderRadius: 4, padding: "12px 14px", fontSize: 13, marginBottom: 20 }}>
         <strong>AI-generated content.</strong> Nothing here is public. Every draft requires you to confirm you've
         checked its citations and legal claims before it can be published — verify against the linked sources (or
         independently, for anything auto-generated later without live search grounding) before publishing.
@@ -81,10 +81,10 @@ function AIDraftsTab({ drafts, onPublish, onDiscard, onGenerate, generating, gen
             {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
-        <button type="submit" className="btn btn-oxblood" disabled={generating} style={{ fontSize: 13 }}>
+        <button type="submit" className="btn btn-seal" disabled={generating} style={{ fontSize: 13 }}>
           {generating ? "Generating…" : "Generate draft"}
         </button>
-        {generateError && <div style={{ color: "var(--oxblood-dark)", fontSize: 12.5, marginTop: 8 }}>{generateError}</div>}
+        {generateError && <div style={{ color: "var(--seal-dark)", fontSize: 12.5, marginTop: 8 }}>{generateError}</div>}
         <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 8 }}>
           Requires an ANTHROPIC_API_KEY set in your deployment's environment variables. This path does not use live
           web search — treat every claim and citation as unverified until you check it yourself.
@@ -107,7 +107,7 @@ function AIDraftsTab({ drafts, onPublish, onDiscard, onGenerate, generating, gen
                 <div style={{ marginBottom: 10 }}>
                   <div style={{ fontSize: 11.5, fontWeight: 600, color: "var(--ink-soft)", marginBottom: 4 }}>Sources to verify:</div>
                   {d.sources.map((s, i) => (
-                    <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" style={{ display: "block", fontSize: 12.5, color: "var(--oxblood)", marginBottom: 2 }}>
+                    <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" style={{ display: "block", fontSize: 12.5, color: "var(--seal)", marginBottom: 2 }}>
                       {s.label} ↗
                     </a>
                   ))}
@@ -151,7 +151,7 @@ function AIDraftsTab({ drafts, onPublish, onDiscard, onGenerate, generating, gen
 
                   <div style={{ display: "flex", gap: 10 }}>
                     <button
-                      className="btn btn-oxblood"
+                      className="btn btn-seal"
                       style={{ fontSize: 13, padding: "8px 14px", opacity: isVerified ? 1 : 0.4, cursor: isVerified ? "pointer" : "not-allowed" }}
                       disabled={!isVerified}
                       onClick={() => onPublish(d.id, e)}
@@ -204,7 +204,7 @@ function SponsoredTab({ items, onAdd, onToggle, onRemove }) {
           <label>Blurb</label>
           <textarea value={form.blurb} onChange={update("blurb")} rows={3} />
         </div>
-        <button type="submit" className="btn btn-oxblood">
+        <button type="submit" className="btn btn-seal">
           Add sponsored placement
         </button>
       </form>
@@ -220,7 +220,7 @@ function SponsoredTab({ items, onAdd, onToggle, onRemove }) {
             <button onClick={() => onToggle(s.id)} className="btn btn-outline" style={{ fontSize: 12, padding: "6px 10px" }}>
               {s.active ? "Pause" : "Activate"}
             </button>
-            <button onClick={() => onRemove(s.id)} style={{ background: "none", border: "none", color: "var(--oxblood)", fontSize: 12 }}>
+            <button onClick={() => onRemove(s.id)} style={{ background: "none", border: "none", color: "var(--seal)", fontSize: 12 }}>
               Remove
             </button>
           </div>
@@ -256,7 +256,7 @@ function Tabs({ active, onChange }) {
           style={{
             background: "none",
             border: "none",
-            borderBottom: active === t ? "2px solid var(--oxblood)" : "2px solid transparent",
+            borderBottom: active === t ? "2px solid var(--seal)" : "2px solid transparent",
             padding: "10px 4px",
             marginRight: 20,
             fontWeight: active === t ? 700 : 500,
@@ -287,12 +287,12 @@ function SubmissionsTab({ submissions, onApprove, onReject }) {
           </div>
           <p style={{ fontSize: 13.5, lineHeight: 1.6, color: "var(--text)", maxHeight: 120, overflow: "auto" }}>{s.body}</p>
           {s.attachment && (
-            <a href={s.attachment.dataUrl} download={s.attachment.name} style={{ fontSize: 12.5, color: "var(--oxblood)" }}>
+            <a href={s.attachment.dataUrl} download={s.attachment.name} style={{ fontSize: 12.5, color: "var(--seal)" }}>
               📎 {s.attachment.name}
             </a>
           )}
           <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
-            <button className="btn btn-oxblood" style={{ fontSize: 13, padding: "8px 14px" }} onClick={() => onApprove(s)}>
+            <button className="btn btn-seal" style={{ fontSize: 13, padding: "8px 14px" }} onClick={() => onApprove(s)}>
               Approve &amp; publish
             </button>
             <button className="btn btn-outline" style={{ fontSize: 13, padding: "8px 14px" }} onClick={() => onReject(s)}>
@@ -332,7 +332,7 @@ function WireTab({ data, onAdd, onRemove }) {
           placeholder="Headline"
           style={{ flex: 1, padding: "10px 12px", border: "1px solid var(--rule)", borderRadius: 3 }}
         />
-        <button className="btn btn-oxblood" type="submit">
+        <button className="btn btn-seal" type="submit">
           Post
         </button>
       </form>
@@ -346,7 +346,7 @@ function WireTab({ data, onAdd, onRemove }) {
           {(data[c] || []).map((item) => (
             <div key={item.id} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid var(--rule)", fontSize: 13.5 }}>
               <span>{item.headline}</span>
-              <button onClick={() => onRemove(c, item.id)} style={{ background: "none", border: "none", color: "var(--oxblood)", fontSize: 12 }}>
+              <button onClick={() => onRemove(c, item.id)} style={{ background: "none", border: "none", color: "var(--seal)", fontSize: 12 }}>
                 Remove
               </button>
             </div>

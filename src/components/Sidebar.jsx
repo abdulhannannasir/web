@@ -1,9 +1,20 @@
 import { COUNTRIES } from "../data/seedData.js";
 import NewsletterSignup from "./NewsletterSignup.jsx";
+import useReveal from "../hooks/useReveal.js";
+
+const panelStyle = {
+  border: "1px solid var(--rule)",
+  borderRadius: 6,
+  background: "var(--paper-raised)",
+  padding: 16,
+  marginBottom: 20,
+  boxShadow: "var(--shadow-sm)",
+};
 
 function MiniPanel({ title, dataByCountry }) {
+  const [ref, visible] = useReveal();
   return (
-    <div style={{ border: "1px solid var(--rule)", borderRadius: 4, background: "var(--paper-raised)", padding: 16, marginBottom: 20 }}>
+    <div ref={ref} className={`lp-reveal${visible ? " lp-in" : ""}`} style={panelStyle}>
       <div style={{ fontFamily: "var(--serif)", fontWeight: 700, fontSize: 16, marginBottom: 12 }}>{title}</div>
       {COUNTRIES.map((country) => {
         const items = dataByCountry[country] || [];
@@ -26,10 +37,11 @@ function MiniPanel({ title, dataByCountry }) {
 }
 
 export default function Sidebar({ trending, onOpen, newsWire, legislative, onSubscribe }) {
+  const [ref, visible] = useReveal();
   return (
-    <aside className="sidebar" style={{ position: "sticky", top: 20, alignSelf: "start" }}>
+    <aside className="sidebar" style={{ position: "sticky", top: 92, alignSelf: "start" }}>
       <NewsletterSignup onSubscribe={onSubscribe} />
-      <div style={{ border: "1px solid var(--rule)", borderRadius: 4, background: "var(--paper-raised)", padding: 16, marginBottom: 20 }}>
+      <div ref={ref} className={`lp-reveal${visible ? " lp-in" : ""}`} style={panelStyle}>
         <div style={{ fontFamily: "var(--serif)", fontWeight: 700, fontSize: 16, marginBottom: 12 }}>Trending</div>
         {trending.map((a, i) => (
           <button
@@ -44,9 +56,12 @@ export default function Sidebar({ trending, onOpen, newsWire, legislative, onSub
               border: "none",
               padding: "8px 0",
               borderBottom: i < trending.length - 1 ? "1px solid var(--rule)" : "none",
+              transition: "padding-left var(--dur-fast) var(--ease)",
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.paddingLeft = "4px"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.paddingLeft = "0"; }}
           >
-            <span style={{ fontFamily: "var(--serif)", fontWeight: 700, color: "var(--brass)", fontSize: 18 }}>
+            <span style={{ fontFamily: "var(--serif)", fontWeight: 700, color: "var(--gold)", fontSize: 18 }}>
               {String(i + 1).padStart(2, "0")}
             </span>
             <span style={{ fontSize: 13.5, lineHeight: 1.4 }}>{a.title}</span>

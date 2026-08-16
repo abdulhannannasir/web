@@ -1,8 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CATEGORIES } from "../data/seedData.js";
+
+function NavLink({ children, onClick }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <a
+      href="#"
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{ position: "relative", paddingBottom: 2 }}
+    >
+      {children}
+      <span
+        style={{
+          position: "absolute",
+          left: 0,
+          right: hover ? 0 : "100%",
+          bottom: -2,
+          height: 1,
+          background: "var(--seal)",
+          transition: "right var(--dur-fast) var(--ease)",
+        }}
+      />
+    </a>
+  );
+}
 
 export default function Header({ onNavigate, onCategory, isAdmin }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const today = new Date().toLocaleDateString(undefined, {
     weekday: "long",
     year: "numeric",
@@ -10,8 +37,26 @@ export default function Header({ onNavigate, onCategory, isAdmin }) {
     day: "numeric",
   });
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header style={{ borderBottom: "1px solid var(--rule)", background: "var(--paper-raised)" }}>
+    <header
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 30,
+        borderBottom: "1px solid var(--rule)",
+        background: scrolled ? "rgba(247, 244, 238, 0.86)" : "var(--paper-raised)",
+        backdropFilter: scrolled ? "blur(10px)" : "none",
+        WebkitBackdropFilter: scrolled ? "blur(10px)" : "none",
+        boxShadow: scrolled ? "var(--shadow-sm)" : "none",
+        transition: "background var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease)",
+      }}
+    >
       {/* Utility bar */}
       <div
         className="wrap"
@@ -29,27 +74,23 @@ export default function Header({ onNavigate, onCategory, isAdmin }) {
       >
         <span>{today.toUpperCase()}</span>
         <nav style={{ display: "flex", gap: 18 }}>
-          <a href="#write" onClick={(e) => { e.preventDefault(); onNavigate("write"); }}>
-            WRITE FOR US
-          </a>
-          <a href="#advertise" onClick={(e) => { e.preventDefault(); onNavigate("advertise"); }}>
-            ADVERTISE
-          </a>
-          <a href="#admin" onClick={(e) => { e.preventDefault(); onNavigate("admin"); }}>
+          <NavLink onClick={(e) => { e.preventDefault(); onNavigate("write"); }}>WRITE FOR US</NavLink>
+          <NavLink onClick={(e) => { e.preventDefault(); onNavigate("advertise"); }}>ADVERTISE</NavLink>
+          <NavLink onClick={(e) => { e.preventDefault(); onNavigate("admin"); }}>
             {isAdmin ? "ADMIN DASHBOARD" : "ADMIN PORTAL"}
-          </a>
+          </NavLink>
         </nav>
       </div>
 
       {/* Main nav */}
       <div
         className="wrap"
-        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 20px" }}
+        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px" }}
       >
         <a
           href="#home"
           onClick={(e) => { e.preventDefault(); onNavigate("home"); }}
-          style={{ fontFamily: "var(--serif)", fontWeight: 700, fontSize: 30, letterSpacing: "0.01em", color: "var(--ink)" }}
+          style={{ fontFamily: "var(--serif)", fontWeight: 800, fontSize: 29, letterSpacing: "0.005em", color: "var(--ink)" }}
         >
           Legal Perspective
         </a>
@@ -64,16 +105,18 @@ export default function Header({ onNavigate, onCategory, isAdmin }) {
           </button>
           {dropdownOpen && (
             <div
+              className="lp-fade-in"
               style={{
                 position: "absolute",
                 right: 0,
                 top: "110%",
                 background: "var(--paper-raised)",
                 border: "1px solid var(--rule)",
-                borderRadius: 4,
-                boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+                borderRadius: 6,
+                boxShadow: "var(--shadow-lg)",
                 minWidth: 240,
                 zIndex: 20,
+                overflow: "hidden",
               }}
             >
               {CATEGORIES.map((cat) => (
@@ -90,7 +133,10 @@ export default function Header({ onNavigate, onCategory, isAdmin }) {
                     padding: "10px 16px",
                     fontSize: 14,
                     borderBottom: "1px solid var(--rule)",
+                    transition: "background var(--dur-fast) var(--ease), padding-left var(--dur-fast) var(--ease)",
                   }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--gold-soft)"; e.currentTarget.style.paddingLeft = "20px"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.paddingLeft = "16px"; }}
                 >
                   {cat}
                 </a>

@@ -1,23 +1,32 @@
-@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700;8..60,800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap");
 
 :root {
-  --ink: #1b2432;
-  --ink-soft: #3d4657;
-  --paper: #faf8f3;
+  --ink: #14202e;
+  --ink-soft: #3a4658;
+  --paper: #f7f4ee;
   --paper-raised: #ffffff;
-  --rule: #ddd6c8;
-  --oxblood: #7a2e2e;
-  --oxblood-dark: #5e2222;
-  --brass: #a9822f;
-  --brass-soft: #e8dcc0;
-  --text: #23262b;
-  --text-muted: #666b74;
+  --rule: #e4dfd1;
+  --seal: #8b2332;
+  --seal-dark: #6b1a26;
+  --gold: #b8935a;
+  --gold-soft: #efe3cd;
+  --text: #1c2430;
+  --text-muted: #656d7a;
 
   --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, monospace;
 
   --max: 1180px;
+
+  /* elevation — tinted from ink, not generic gray */
+  --shadow-sm: 0 1px 2px rgba(20, 32, 46, 0.06), 0 1px 1px rgba(20, 32, 46, 0.04);
+  --shadow-md: 0 6px 20px rgba(20, 32, 46, 0.09), 0 2px 6px rgba(20, 32, 46, 0.06);
+  --shadow-lg: 0 20px 48px rgba(20, 32, 46, 0.14), 0 6px 16px rgba(20, 32, 46, 0.08);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 180ms;
+  --dur-med: 420ms;
 }
 
 * {
@@ -50,8 +59,19 @@ img {
   display: block;
 }
 :focus-visible {
-  outline: 2px solid var(--oxblood);
+  outline: 2px solid var(--seal);
   outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 .wrap {
@@ -65,7 +85,7 @@ img {
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--oxblood);
+  color: var(--seal);
 }
 
 .section-head {
@@ -73,12 +93,12 @@ img {
   align-items: baseline;
   justify-content: space-between;
   border-bottom: 2px solid var(--ink);
-  margin: 40px 0 18px;
-  padding-bottom: 8px;
+  margin: 44px 0 20px;
+  padding-bottom: 9px;
 }
 .section-head h2 {
   font-family: var(--serif);
-  font-size: 22px;
+  font-size: 23px;
   font-weight: 700;
   margin: 0;
   letter-spacing: 0.01em;
@@ -89,9 +109,10 @@ img {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease);
 }
 .section-head .see-all:hover {
-  color: var(--oxblood);
+  color: var(--seal);
 }
 
 .btn {
@@ -104,19 +125,25 @@ img {
   padding: 10px 18px;
   font-size: 14px;
   font-weight: 600;
-  border-radius: 3px;
-  transition: opacity 0.15s ease;
+  border-radius: 4px;
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
 }
 .btn:hover {
-  opacity: 0.85;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 .btn-outline {
   background: transparent;
   color: var(--ink);
 }
-.btn-oxblood {
-  background: var(--oxblood);
-  border-color: var(--oxblood);
+.btn-oxblood,
+.btn-seal {
+  background: var(--seal);
+  border-color: var(--seal);
 }
 
 .field {
@@ -137,30 +164,93 @@ img {
   font-size: 14px;
   padding: 10px 12px;
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: 4px;
   background: var(--paper-raised);
   color: var(--text);
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
 }
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  border-color: var(--oxblood);
+  border-color: var(--seal);
+  box-shadow: 0 0 0 3px rgba(139, 35, 50, 0.1);
+  outline: none;
 }
 .field textarea {
   resize: vertical;
   min-height: 140px;
 }
 .error-text {
-  color: var(--oxblood-dark);
+  color: var(--seal-dark);
   font-size: 13px;
 }
 .notice {
-  background: var(--brass-soft);
-  border: 1px solid var(--brass);
+  background: var(--gold-soft);
+  border: 1px solid var(--gold);
   border-radius: 4px;
   padding: 12px 14px;
   font-size: 14px;
   margin-bottom: 16px;
+}
+
+/* ---------- card elevation + hover ---------- */
+.lp-card {
+  transition: transform var(--dur-med) var(--ease), box-shadow var(--dur-med) var(--ease), border-color var(--dur-med) var(--ease);
+  box-shadow: var(--shadow-sm);
+}
+.lp-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: transparent !important;
+}
+.lp-card .lp-card-art {
+  overflow: hidden;
+}
+.lp-card .lp-card-art svg {
+  transition: transform 700ms var(--ease);
+}
+.lp-card:hover .lp-card-art svg {
+  transform: scale(1.06);
+}
+
+/* ---------- scroll reveal ---------- */
+.lp-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 700ms var(--ease), transform 700ms var(--ease);
+}
+.lp-reveal.lp-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes lp-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.lp-fade-in {
+  animation: lp-fade-in var(--dur-med) var(--ease) both;
+}
+
+@keyframes lp-skeleton {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+.lp-skeleton {
+  background: linear-gradient(90deg, var(--rule) 0%, #f0ebe0 50%, var(--rule) 100%);
+  background-size: 400px 100%;
+  animation: lp-skeleton 1.3s ease-in-out infinite;
+  border-radius: 4px;
 }
 
 @media (max-width: 640px) {
