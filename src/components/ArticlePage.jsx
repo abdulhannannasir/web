@@ -1,4 +1,5 @@
 import CoverArt from "./CoverArt.jsx";
+import AuthorSeal from "./AuthorSeal.jsx";
 
 export default function ArticlePage({ article, onBack }) {
   if (!article) return null;
@@ -11,7 +12,8 @@ export default function ArticlePage({ article, onBack }) {
       <h1 style={{ fontFamily: "var(--serif)", fontSize: "clamp(28px, 4vw, 42px)", lineHeight: 1.15, margin: "10px 0 14px" }}>
         {article.title}
       </h1>
-      <div style={{ fontFamily: "var(--mono)", fontSize: 13, color: "var(--text-muted)", marginBottom: 24 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "var(--mono)", fontSize: 13, color: "var(--text-muted)", marginBottom: 24 }}>
+        <AuthorSeal name={article.author} size={30} />
         {article.author} · {new Date(article.date).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}
       </div>
       <div style={{ borderRadius: 4, overflow: "hidden", marginBottom: 28, border: "1px solid var(--rule)" }}>

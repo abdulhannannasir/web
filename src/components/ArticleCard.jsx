@@ -1,4 +1,5 @@
 import CoverArt from "./CoverArt.jsx";
+import AuthorSeal from "./AuthorSeal.jsx";
 
 export default function ArticleCard({ article, onOpen }) {
   return (
@@ -24,7 +25,8 @@ export default function ArticleCard({ article, onOpen }) {
         <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
           {article.excerpt.length > 100 ? article.excerpt.slice(0, 100) + "…" : article.excerpt}
         </p>
-        <span style={{ marginTop: "auto", fontFamily: "var(--mono)", fontSize: 11, color: "var(--ink-soft)" }}>
+        <span style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, fontFamily: "var(--mono)", fontSize: 11, color: "var(--ink-soft)" }}>
+          <AuthorSeal name={article.author} size={18} />
           {article.author} · {new Date(article.date).toLocaleDateString()}
         </span>
       </div>

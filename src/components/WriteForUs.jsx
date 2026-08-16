@@ -88,6 +88,10 @@ export default function WriteForUs({ onSubmit }) {
           <li>Include a two- to three-sentence author bio in the body of your submission.</li>
           <li>Attachments (draft PDF/DOCX, supporting exhibits) are optional — under 2MB.</li>
         </ul>
+        <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 12, marginBottom: 0 }}>
+          Published contributors get their own generated seal, shown next to their byline site-wide — a
+          permanent, citable mark of the piece, not just a name in small print.
+        </p>
       </div>
 
       <form onSubmit={handleSubmit}>

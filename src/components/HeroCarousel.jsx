@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import CoverArt from "./CoverArt.jsx";
+import AuthorSeal from "./AuthorSeal.jsx";
 
 export default function HeroCarousel({ articles, onOpen }) {
   const [index, setIndex] = useState(0);
@@ -52,7 +53,8 @@ export default function HeroCarousel({ articles, onOpen }) {
           {current.title}
         </h1>
         <p style={{ color: "var(--text-muted)", fontSize: 15, lineHeight: 1.6, margin: 0 }}>{current.excerpt}</p>
-        <span style={{ fontSize: 13, color: "var(--ink-soft)", fontFamily: "var(--mono)" }}>
+        <span style={{ fontSize: 13, color: "var(--ink-soft)", fontFamily: "var(--mono)", display: "flex", alignItems: "center", gap: 8 }}>
+          <AuthorSeal name={current.author} size={22} />
           {current.author} · {new Date(current.date).toLocaleDateString()}
         </span>
       </button>
