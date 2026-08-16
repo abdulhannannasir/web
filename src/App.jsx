@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase, storageGet, storageSet } from "./supabaseClient.js";
 import { CATEGORIES, SEED_ARTICLES, SEED_NEWS, SEED_LEGISLATIVE, SEED_AI_DRAFTS } from "./data/seedData.js";
+import slugify from "./utils/slugify.js";
 
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
@@ -34,6 +35,47 @@ async function loadJSON(key, fallback) {
 
 async function saveJSON(key, value) {
   await storageSet(key, JSON.stringify(value));
+}
+
+// --- Shareable, crawlable URLs ---
+// /article/<title-slug>/<id>   — id is authoritative, slug is cosmetic
+// /category/<category-slug>
+// /author/<author-slug>
+// /write /admin /about /contact /terms /privacy /advertise
+const STATIC_VIEWS = ["write", "admin", "about", "contact", "terms", "privacy", "advertise"];
+
+function pathForView(v) {
+  return v === "home" ? "/" : `/${v}`;
+}
+function pathForArticle(article) {
+  return `/article/${slugify(article.title)}/${article.id}`;
+}
+function pathForCategory(category) {
+  return `/category/${slugify(category)}`;
+}
+function pathForAuthor(author) {
+  return `/author/${slugify(author)}`;
+}
+
+function resolveFromPath(pathname, articlesList) {
+  const parts = pathname.split("/").filter(Boolean);
+  if (parts[0] === "article" && parts.length >= 2) {
+    const id = parts[parts.length - 1];
+    const found = articlesList.find((a) => a.id === id);
+    if (found) return { view: "article", selectedArticle: found, activeCategory: null, activeAuthor: null };
+  }
+  if (parts[0] === "category" && parts[1]) {
+    const found = CATEGORIES.find((c) => slugify(c) === parts[1]);
+    if (found) return { view: "home", selectedArticle: null, activeCategory: found, activeAuthor: null };
+  }
+  if (parts[0] === "author" && parts[1]) {
+    const match = articlesList.find((a) => slugify(a.author) === parts[1]);
+    if (match) return { view: "home", selectedArticle: null, activeCategory: null, activeAuthor: match.author };
+  }
+  if (STATIC_VIEWS.includes(parts[0])) {
+    return { view: parts[0], selectedArticle: null, activeCategory: null, activeAuthor: null };
+  }
+  return { view: "home", selectedArticle: null, activeCategory: null, activeAuthor: null };
 }
 
 export default function App() {
@@ -76,6 +118,14 @@ export default function App() {
       setSubscribers(subs);
       setAiDrafts(drafts);
       setLoading(false);
+
+      // Restore state from the URL the person actually landed on (a direct
+      // article link, a category page, etc.) now that articles are loaded.
+      const initial = resolveFromPath(window.location.pathname, a);
+      setView(initial.view);
+      setSelectedArticle(initial.selectedArticle);
+      setActiveCategory(initial.activeCategory);
+      setActiveAuthor(initial.activeAuthor);
     })();
 
     supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
@@ -85,17 +135,32 @@ export default function App() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
+  // Browser back/forward support.
+  useEffect(() => {
+    const onPopState = () => {
+      const state = resolveFromPath(window.location.pathname, articles);
+      setView(state.view);
+      setSelectedArticle(state.selectedArticle);
+      setActiveCategory(state.activeCategory);
+      setActiveAuthor(state.activeAuthor);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [articles]);
+
   const navigate = (v) => {
     setView(v);
     setSelectedArticle(null);
     setActiveCategory(null);
     setActiveAuthor(null);
+    window.history.pushState(null, "", pathForView(v));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const openArticle = (article) => {
     setSelectedArticle(article);
     setView("article");
+    window.history.pushState(null, "", pathForArticle(article));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -103,6 +168,7 @@ export default function App() {
     setActiveCategory(category);
     setActiveAuthor(null);
     setView("home");
+    window.history.pushState(null, "", pathForCategory(category));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -110,6 +176,7 @@ export default function App() {
     setActiveAuthor(author);
     setActiveCategory(null);
     setView("home");
+    window.history.pushState(null, "", pathForAuthor(author));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 

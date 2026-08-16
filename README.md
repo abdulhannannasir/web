@@ -73,6 +73,26 @@ build command `npm run build`, publish directory `dist`.
 3. It'll give you DNS records (usually a CNAME or A record) to add at your
    registrar. Add them there. Propagation is usually under an hour.
 
+## 7. Finish the launch checklist (do this once you have a real domain)
+
+- Open `index.html` and replace the two `https://YOUR-DOMAIN-HERE.com/`
+  placeholders (the `og:url` and `canonical` tags) with your real domain.
+- Same in `public/robots.txt` — update the `Sitemap:` line.
+- Optional but recommended: submit your homepage to
+  [Google Search Console](https://search.google.com/search-console) once
+  live, so it gets crawled and indexed faster.
+- The site now has real per-article, per-category, and per-author URLs
+  (e.g. `/article/some-title/art-123`) that work on refresh and share
+  correctly — this required a Vercel rewrite rule, already included in
+  `vercel.json`. If you deploy anywhere other than Vercel, you'll need an
+  equivalent "serve index.html for all non-file paths" rule for deep links
+  to survive a page refresh.
+- Favicons, the social share image (`og-image.png`), and Open Graph/Twitter
+  Card tags are already wired up — test how a shared link looks with
+  [Facebook's Sharing Debugger](https://developers.facebook.com/tools/debug/)
+  or [Twitter's Card Validator](https://cards-dev.twitter.com/validator)
+  after your domain is live.
+
 ## What's included
 
 - **Public pages:** Home, Article view, Write for Us, About, Contact, Terms of Service, Privacy Policy
