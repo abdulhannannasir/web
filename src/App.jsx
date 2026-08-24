@@ -128,7 +128,7 @@ export default function App() {
       setActiveAuthor(initial.activeAuthor);
     })();
 
-    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
+    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null)).catch(() => setUser(null));
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });

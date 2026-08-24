@@ -1,0 +1,32 @@
+{
+  "name": "admin-portal",
+  "version": "1.0.0",
+  "description": "Admin Portal for user authentication and management",
+  "main": "src/app.ts",
+  "scripts": {
+    "start": "ts-node src/app.ts",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "bcrypt": "^5.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.9"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.2",
+    "ts-node": "^9.1.1",
+    "jest": "^26.6.3",
+    "@types/jest": "^26.0.20",
+    "@types/express": "^4.17.8"
+  },
+  "keywords": [
+    "admin",
+    "portal",
+    "authentication",
+    "user management"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
