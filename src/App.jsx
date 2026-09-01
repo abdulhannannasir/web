@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { supabase, storageGet, storageSet } from "./supabaseClient.js";
 import { CATEGORIES, SEED_ARTICLES, SEED_NEWS, SEED_LEGISLATIVE, SEED_AI_DRAFTS } from "./data/seedData.js";
 import slugify from "./utils/slugify.js";
@@ -465,6 +466,7 @@ export default function App() {
       </main>
 
       <Footer onNavigate={navigate} onCategory={openCategory} />
+      <Analytics />
     </div>
   );
 }
